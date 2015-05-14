@@ -1,1 +1,34 @@
-i
+app:
+  restart: always
+  image: alteroo/plone-instance
+  user: 88
+  links:
+   - zeo:zeo
+  ports:
+   - "8080"
+  volumes_from:
+   - data
+appadmin:
+  restart: always
+  image: alteroo/plone-instance
+  user: 88
+  links:
+   - zeo:zeo
+  ports:
+   - "8888:8080"
+  volumes_from:
+   - data
+data:
+  build: data
+  user: 88
+  volumes:
+   - /opt/plone/app/var/blobstorage
+   - /opt/plone/app/var/filestorage
+varnish:
+  restart: always
+  build: varnish
+  links:
+   - app:instance1
+   - app:instance2
+  ports:
+   - "8080:80"

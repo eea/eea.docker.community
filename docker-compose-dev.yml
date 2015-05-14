@@ -1,0 +1,18 @@
+# zeo:
+#   build: zeo
+#   user: 1000
+#   volumes_from:
+#    - data
+
+zclient:
+  build: client
+  user: 1000
+  ports:
+   - "8881:8080"
+#  volumes_from:
+#   - data
+
+data:
+  build: data
+  volumes:
+   - /home/work/community.eea.europa.eu/var/
