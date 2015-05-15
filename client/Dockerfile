@@ -2,7 +2,7 @@
 FROM eeacms/community
 
 # MAINTAINER David Ichim <david.ichim@eaudeweb.ro>
+WORKDIR /var/local/community.eea.europa.eu
+CMD	bin/www1 fg
 
-CMD	cd /var/local/community.eea.europa.eu; bin/instance console
-
-EXPOSE  8080
+EXPOSE  8081

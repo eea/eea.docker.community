@@ -1,18 +1,33 @@
-# zeo:
-#   build: zeo
-#   user: 1000
-#   volumes_from:
-#    - data
-
-zclient:
+zeo:
+  build: zeo
+  user: 1000
+  volumes_from:
+   - data
+#
+client:
+  restart: always
   build: client
   user: 1000
+  links:
+   - zeo:zeo
   ports:
-   - "8881:8080"
-#  volumes_from:
-#   - data
+   - "8881:8081"
+  volumes_from:
+   - data
+
+client2:
+  restart: always
+  build: client
+  user: 1000
+  links:
+   - zeo:zeo
+  ports:
+   - "8880:8081"
+  volumes_from:
+   - data
 
 data:
   build: data
   volumes:
-   - /home/work/community.eea.europa.eu/var/
+   - /var/local/community.eea.europa.eu/var/blobstorage
+   - /var/local/community.eea.europa.eu/var/filestorage

@@ -1,7 +1,10 @@
 FROM eeacms/community
 
 MAINTAINER "David Ichim" <david.ichim@eaudeweb.ro>
+WORKDIR /var/local/community.eea.europa.eu
+VOLUME  /var/local/community.eea.europa.eu/var/blobstorage
+VOLUME  /var/local/community.eea.europa.eu/var/filestorage
 
-CMD	cd /var/local/community.eea.europa.eu; bin/zeoserver start
+CMD	bin/zeoserver fg
 
 EXPOSE  8100
