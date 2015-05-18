@@ -5,6 +5,6 @@ WORKDIR /var/local/community.eea.europa.eu
 VOLUME  /var/local/community.eea.europa.eu/var/blobstorage
 VOLUME  /var/local/community.eea.europa.eu/var/filestorage
 
-CMD	bin/zeoserver fg
+CMD bin/zeoserver fg
 
-EXPOSE  8100
+EXPOSE 8100

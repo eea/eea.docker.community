@@ -2,10 +2,11 @@ FROM busybox
 
 MAINTAINER "David Ichim" <david.ichim@eaudeweb.ro>
 
-ENV VOLUME_PATH /var/local/community.eea.europa.eu/var/
-RUN mkdir -p $VOLUME_PATH && mkdir -p $VOLUME_PATH/filestorage && mkdir -p $VOLUME_PATH/blobstorage
+ENV VOLUME_PATH /var/local/community.eea.europa.eu/
 
-RUN chown -R 1000:1000 $VOLUME_PATH
-#VOLUME $VOLUME_PATH
+RUN mkdir -p $VOLUME_PATH/var/filestorage
+RUN chown -R 1000:1000 $VOLUME_PATH && chown -R 1000:1000 $VOLUME_PATH/var/filestorage
+
+VOLUME $VOLUME_PATH/filestorage
 
 USER 1000

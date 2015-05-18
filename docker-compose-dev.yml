@@ -3,8 +3,8 @@ zeo:
   user: 1000
   volumes_from:
    - data
-#
-client:
+
+www1:
   restart: always
   build: client
   user: 1000
@@ -15,7 +15,7 @@ client:
   volumes_from:
    - data
 
-client2:
+www2:
   restart: always
   build: client
   user: 1000
@@ -29,5 +29,4 @@ client2:
 data:
   build: data
   volumes:
-   - /var/local/community.eea.europa.eu/var/blobstorage
    - /var/local/community.eea.europa.eu/var/filestorage
