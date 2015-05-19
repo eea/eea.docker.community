@@ -7,6 +7,6 @@ ENV VOLUME_PATH /var/local/community.eea.europa.eu/
 RUN mkdir -p $VOLUME_PATH/var/filestorage
 RUN chown -R 1000:1000 $VOLUME_PATH && chown -R 1000:1000 $VOLUME_PATH/var/filestorage
 
-VOLUME $VOLUME_PATH/filestorage
+VOLUME $VOLUME_PATH/var/filestorage
 
 USER 1000
