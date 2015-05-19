@@ -3,36 +3,40 @@ zeo:
   user: 1000
   volumes_from:
    - data
-#
-client:
+
+www1:
   restart: always
   build: client
   user: 1000
   links:
    - zeo:zeo
   ports:
-   - "8881:8081"
+   - "8881:8080"
   volumes_from:
    - data
 
 www2:
   restart: always
+  environment:
+   - SLEEP_DELAY=10
   build: client
   user: 1000
   links:
    - zeo:zeo
   ports:
-   - "8880:8081"
+   - "8880:8080"
   volumes_from:
    - data
+
 data:
   build: data
-  user: 1000
+  volumes:
+   - /var/local/community.eea.europa.eu/var/filestorage
 varnish:
   restart: always
   build: varnish
   links:
-   - app:instance1
-   - app:instance2
+   - www1:instance1
+   - www2:instance2
   ports:
    - "8080:80"

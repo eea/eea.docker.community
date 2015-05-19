@@ -11,7 +11,7 @@ www1:
   links:
    - zeo:zeo
   ports:
-   - "8881:8081"
+   - "8881:8080"
   volumes_from:
    - data
 
@@ -24,7 +24,7 @@ www2:
   links:
    - zeo:zeo
   ports:
-   - "8880:8081"
+   - "8880:8080"
   volumes_from:
    - data
 
