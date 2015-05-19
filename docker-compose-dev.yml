@@ -17,6 +17,8 @@ www1:
 
 www2:
   restart: always
+  environment:
+   - SLEEP_DELAY=15
   build: client
   user: 1000
   links:
