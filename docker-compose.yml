@@ -4,15 +4,18 @@ zeo:
   volumes_from:
    - data
 
+mailserver:
+  image: tianon/exim4
+
 www1:
   restart: always
   build: client
   user: 1000
   environment:
-   - SLEEP_DELAY=10
    - INSTANCE_NAME=www1
   links:
    - zeo:zeo
+   - mailserver:mailserver
   ports:
    - "8881:8080"
   volumes_from:
@@ -27,6 +30,7 @@ www2:
   user: 1000
   links:
    - zeo:zeo
+   - mailserver:mailserver
   ports:
    - "8880:8080"
   volumes_from:
@@ -36,6 +40,7 @@ data:
   build: data
   volumes:
    - /var/local/community.eea.europa.eu/var/filestorage
+
 varnish:
   restart: always
   build: varnish
