@@ -4,12 +4,19 @@ zeo:
   volumes_from:
    - data
 
+mailserver:
+  image: tianon/exim4
+
+
 www1:
   restart: always
   build: client
   user: 1000
+  environment:
+   - INSTANCE_NAME=www1
   links:
    - zeo:zeo
+   - mailserver:mailserver
   ports:
    - "8881:8080"
   volumes_from:
@@ -19,10 +26,12 @@ www2:
   restart: always
   environment:
    - SLEEP_DELAY=10
+   - INSTANCE_NAME=www2
   build: client
   user: 1000
   links:
    - zeo:zeo
+   - mailserver:mailserver
   ports:
    - "8880:8080"
   volumes_from:

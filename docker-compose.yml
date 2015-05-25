@@ -8,6 +8,9 @@ www1:
   restart: always
   build: client
   user: 1000
+  environment:
+   - SLEEP_DELAY=10
+   - INSTANCE_NAME=www1
   links:
    - zeo:zeo
   ports:
@@ -19,6 +22,7 @@ www2:
   restart: always
   environment:
    - SLEEP_DELAY=10
+   - INSTANCE_NAME=www2
   build: client
   user: 1000
   links:
