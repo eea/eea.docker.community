@@ -1,3 +1,10 @@
+httpd:
+  build: apache
+  links:
+   - "varnish:varnish"
+  ports:
+   - "8083:80"
+
 zeo:
   build: zeo
   user: 1000
