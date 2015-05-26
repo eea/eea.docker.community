@@ -1,3 +1,7 @@
-FROM eeacms/tinyhttpd
+FROM eeacms/httpd
 
-ADD vh-community.conf /etc/apache2/vh-community.conf
+RUN mkdir -p /var/local/www-logs/community/
+
+VOLUME /var/local/www-logs/community/
+
+ADD vh-community.conf /etc/httpd/conf.d/vh-community.conf

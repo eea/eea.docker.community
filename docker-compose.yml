@@ -3,7 +3,7 @@ httpd:
   links:
    - "varnish:varnish"
   ports:
-   - "8083:80"
+   - "8080:80"
 
 zeo:
   build: zeo
@@ -39,7 +39,7 @@ www2:
    - zeo:zeo
    - mailserver:mailserver
   ports:
-   - "8880:8080"
+   - "8882:8080"
   volumes_from:
    - data
 
@@ -55,4 +55,4 @@ varnish:
    - www1:instance1
    - www2:instance2
   ports:
-   - "8080:80"
+   - "8880:80"
