@@ -6,7 +6,7 @@ ENV INSTANCE_NAME $HOSTNAME
 WORKDIR $INSTANCE_PATH
 RUN sed -i "s/127.0.0.1/zeo/g" parts/instance/etc/zope.conf;
 
-USER CYNIN
+USER cynin
 
 CMD sleep $SLEEP_DELAY; sed -i "s/SERVER/$INSTANCE_NAME/g" parts/instance/etc/zope.conf; bin/instance console;
 
