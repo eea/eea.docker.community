@@ -23,7 +23,15 @@ to see the Dockerfile.
     $ cd eea.docker.community
 ```
 
-2. **Before starting you may want to restore existing database** within data container. 
+During the first time deployement, create the secret environment files
+
+    $ cp .postfix.secret.example .postfix.secret
+
+Edit the secret files with real settings (see deployed eea.docker.redmine for example)
+
+    $ vim .postfix.secret
+
+2. **You may also want to restore existing database** within data container:
 ```
     $ docker-compose up data
     $ docker run --rm \
@@ -36,17 +44,14 @@ to see the Dockerfile.
 ```
     $ docker-compose up -d --no-recreate
 ```
-
 4. After all containers are started, you can access the application at **http://localhost** 
-
-5. Update Mail Server via Administration > Mail settings: Replace **localhost** with **postfix**
 
 
 ### Upgrade
 
     $ docker-compose stop
     $ docker-compose pull
-    $ docker-compose rm -v apache haproxy www zeo mailserver
+    $ docker-compose rm -v apache haproxy www1 www2 zeo postfix
     $ docker-compose up -d --no-recreate
 
 

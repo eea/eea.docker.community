@@ -16,7 +16,6 @@ haproxy:
   restart: always
   links:
   - www1
-  - www2
 
 www1:
   image: eeacms/cynin
@@ -46,7 +45,12 @@ zeo:
   command: bin/zeoserver fg
 
 postfix:
-  image: eeacms/postfix
+  image: eeacms/postfix:eionet
+  restart: always
+  volumes:
+  - /etc/localtime:/etc/localtime:ro
+  env_file:
+  - .postfix.secret
 
 data:
   build: data
