@@ -2,7 +2,7 @@ apache:
   image: eeacms/apache
   restart: always
   links:
-  - "haproxy"
+  - haproxy
   ports:
   - "80:80"
   environment:
@@ -13,9 +13,9 @@ apache:
 haproxy:
   image: eeacms/haproxy:1.5
   restart: always
-  restart: always
   links:
   - www1
+  - www2
 
 www1:
   image: eeacms/cynin
