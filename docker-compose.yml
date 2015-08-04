@@ -4,7 +4,7 @@ apache:
   links:
   - haproxy
   ports:
-  - "80:80"
+  - "7070:80"
   environment:
   - SERVER_ADMIN=helpdesk@eionet.europa.eu
   - SERVER_NAME=community.eea.europa.eu
