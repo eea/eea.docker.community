@@ -54,7 +54,3 @@ Edit the secret files with real settings (see deployed eea.docker.redmine for ex
     $ docker-compose rm -v apache haproxy www1 www2 zeo postfix
     $ docker-compose up -d --no-recreate
 
-
-### Data migration
-
-You can access production Data.fs on Gerbil
