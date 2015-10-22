@@ -44,7 +44,7 @@ Edit the secret files with real settings (see deployed eea.docker.redmine for ex
 ```
     $ docker-compose up -d --no-recreate
 ```
-4. After all containers are started, you can access the application at **http://localhost** 
+4. After all containers are started, you can access the application at **http://localhost:7070**. See the docker-compose.yml file for the ports that are exposed to the host.
 
 
 ### Upgrade
