@@ -54,3 +54,20 @@ Edit the secret files with real settings (see deployed eea.docker.redmine for ex
     $ docker-compose rm -v apache haproxy www1 www2 zeo postfix
     $ docker-compose up -d --no-recreate
 
+### First time steps to get a clean Cyn.in portal
+
+If you don't have already an existing Cyn.in site (zodb data.fs) than the following step will get you started to create a fresh Cyn.in site. 
+
+1. expose a port for www1 container: in docker-compose.yml at the www1 section (this will allow you to get into the Plone www1 instance ZMI) add: ```ports: "8080:80"```
+2. run command: docker-compose up
+3. open in browser: http://localhost:8080/manage
+user: admin
+password: secret
+(default zope admin user)
+4. from ZMI add a "Plone Site" object, set the id: "cynin", press the "Add plone site" button
+5. select "cynin", look for "portal_quickinstaller", check the product called "Ubify Site Policy", press the "Install" button
+6. open in browser: http://localhost:8080/cynin
+
+You can than visit via apache and HAProxy via http://localhost:7070/cynin
+
+Documentation at http://cyn.in/
