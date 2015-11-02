@@ -6,6 +6,8 @@ apache:
     - "7070:80"
   env_file:
     - apache.env
+  volumes:
+    - /etc/localtime:/etc/localtime:ro # Share timezone data with host
   restart: always
 
 haproxy:
@@ -13,6 +15,8 @@ haproxy:
   links:
     - www1
     - www2
+  volumes:
+    - /etc/localtime:/etc/localtime:ro # Share timezone data with host
   restart: always
 
 www1:
@@ -23,6 +27,8 @@ www1:
     - zeo
     - postfix
   command: bin/www1 console
+  volumes:
+    - /etc/localtime:/etc/localtime:ro # Share timezone data with host
   restart: always
 
 www2:
@@ -33,6 +39,8 @@ www2:
     - zeo
     - postfix
   command: bin/www1 console
+  volumes:
+    - /etc/localtime:/etc/localtime:ro # Share timezone data with host
   restart: always
 
 zeo:
@@ -40,6 +48,8 @@ zeo:
   volumes_from:
     - data
   command: bin/zeoserver fg
+  volumes:
+    - /etc/localtime:/etc/localtime:ro # Share timezone data with host
   restart: always
 
 postfix:
@@ -48,6 +58,8 @@ postfix:
     - /etc/localtime:/etc/localtime:ro
   env_file:
     - .postfix.secret
+  volumes:
+    - /etc/localtime:/etc/localtime:ro # Share timezone data with host
   restart: always
 
 data:
