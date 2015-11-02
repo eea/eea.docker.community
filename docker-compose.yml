@@ -8,6 +8,11 @@ apache:
     - apache.env
   volumes:
     - /etc/localtime:/etc/localtime:ro # Share timezone data with host
+# send logs to graylog2. following works only with docker-compose 1.5 and docker 1.8 or newer
+  log_driver: "gelf" 
+  log_opt:
+    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
+  restart: always
   restart: always
 
 haproxy:
@@ -17,6 +22,11 @@ haproxy:
     - www2
   volumes:
     - /etc/localtime:/etc/localtime:ro # Share timezone data with host
+# send logs to graylog2. following works only with docker-compose 1.5 and docker 1.8 or newer
+  log_driver: "gelf" 
+  log_opt:
+    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
+  restart: always
   restart: always
 
 www1:
@@ -29,6 +39,11 @@ www1:
   command: bin/www1 console
   volumes:
     - /etc/localtime:/etc/localtime:ro # Share timezone data with host
+# send logs to graylog2. following works only with docker-compose 1.5 and docker 1.8 or newer
+  log_driver: "gelf" 
+  log_opt:
+    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
+  restart: always
   restart: always
 
 www2:
@@ -41,6 +56,10 @@ www2:
   command: bin/www1 console
   volumes:
     - /etc/localtime:/etc/localtime:ro # Share timezone data with host
+# send logs to graylog2. following works only with docker-compose 1.5 and docker 1.8 or newer
+  log_driver: "gelf" 
+  log_opt:
+    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
   restart: always
 
 zeo:
@@ -50,6 +69,11 @@ zeo:
   command: bin/zeoserver fg
   volumes:
     - /etc/localtime:/etc/localtime:ro # Share timezone data with host
+# send logs to graylog2. following works only with docker-compose 1.5 and docker 1.8 or newer
+  log_driver: "gelf" 
+  log_opt:
+    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
+  restart: always
   restart: always
 
 postfix:
@@ -60,6 +84,11 @@ postfix:
     - .postfix.secret
   volumes:
     - /etc/localtime:/etc/localtime:ro # Share timezone data with host
+# send logs to graylog2. following works only with docker-compose 1.5 and docker 1.8 or newer
+  log_driver: "gelf" 
+  log_opt:
+    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
+  restart: always
   restart: always
 
 data:
