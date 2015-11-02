@@ -1,59 +1,57 @@
 apache:
   image: eeacms/apache
-  restart: always
   links:
-  - haproxy
+    - haproxy
   ports:
-  - "7070:80"
-  environment:
-  - SERVER_ADMIN=helpdesk@eionet.europa.eu
-  - SERVER_NAME=community.eea.europa.eu
-  - RewriteRule=^/(.*) http://haproxy/VirtualHostBase/http/community.eea.europa.eu:80/cynin/VirtualHostRoot/$1 [P,L]
+    - "7070:80"
+  env_file:
+    - apache.env
+  restart: always
 
 haproxy:
   image: eeacms/haproxy:1.5
-  restart: always
   links:
-  - www1
-  - www2
+    - www1
+    - www2
+  restart: always
 
 www1:
   image: eeacms/cynin
-  restart: always
-  links:
-  - zeo
-  - postfix
   volumes_from:
-  - data
+    - data
+  links:
+    - zeo
+    - postfix
   command: bin/www1 console
+  restart: always
 
 www2:
   image: eeacms/cynin
-  restart: always
-  links:
-  - zeo
-  - postfix
   volumes_from:
-  - data
+    - data
+  links:
+    - zeo
+    - postfix
   command: bin/www1 console
+  restart: always
 
 zeo:
   image: eeacms/cynin
-  restart: always
   volumes_from:
-  - data
+    - data
   command: bin/zeoserver fg
+  restart: always
 
 postfix:
   image: eeacms/postfix:eionet
-  restart: always
   volumes:
-  - /etc/localtime:/etc/localtime:ro
+    - /etc/localtime:/etc/localtime:ro
   env_file:
-  - .postfix.secret
+    - .postfix.secret
+  restart: always
 
 data:
   build: data
   volumes:
-  - /var/local/community.eea.europa.eu/var/filestorage
-  - /var/local/community.eea.europa.eu/var/blobstorage
+    - /var/local/community.eea.europa.eu/var/filestorage
+    - /var/local/community.eea.europa.eu/var/blobstorage
