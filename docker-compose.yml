@@ -89,7 +89,6 @@ postfix:
   log_opt:
     address: "udp://swarm01-eeasites.eea.europa.eu:12201"
   restart: always
-  restart: always
 
 data:
   build: data
