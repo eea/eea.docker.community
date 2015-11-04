@@ -7,12 +7,10 @@ apache:
   env_file:
     - apache.env
   volumes:
-    - /etc/localtime:/etc/localtime:ro # Share timezone data with host
-# send logs to graylog2. following works only with docker-compose 1.5 and docker 1.8 or newer
+    - /etc/localtime:/etc/localtime:ro
   log_driver: "gelf" 
   log_opt:
     address: "udp://swarm01-eeasites.eea.europa.eu:12201"
-  restart: always
   restart: always
 
 haproxy:
@@ -21,12 +19,10 @@ haproxy:
     - www1
     - www2
   volumes:
-    - /etc/localtime:/etc/localtime:ro # Share timezone data with host
-# send logs to graylog2. following works only with docker-compose 1.5 and docker 1.8 or newer
+    - /etc/localtime:/etc/localtime:ro
   log_driver: "gelf" 
   log_opt:
     address: "udp://swarm01-eeasites.eea.europa.eu:12201"
-  restart: always
   restart: always
 
 www1:
@@ -38,12 +34,10 @@ www1:
     - postfix
   command: bin/www1 console
   volumes:
-    - /etc/localtime:/etc/localtime:ro # Share timezone data with host
-# send logs to graylog2. following works only with docker-compose 1.5 and docker 1.8 or newer
+    - /etc/localtime:/etc/localtime:ro
   log_driver: "gelf" 
   log_opt:
     address: "udp://swarm01-eeasites.eea.europa.eu:12201"
-  restart: always
   restart: always
 
 www2:
@@ -55,8 +49,7 @@ www2:
     - postfix
   command: bin/www1 console
   volumes:
-    - /etc/localtime:/etc/localtime:ro # Share timezone data with host
-# send logs to graylog2. following works only with docker-compose 1.5 and docker 1.8 or newer
+    - /etc/localtime:/etc/localtime:ro
   log_driver: "gelf" 
   log_opt:
     address: "udp://swarm01-eeasites.eea.europa.eu:12201"
@@ -68,12 +61,10 @@ zeo:
     - data
   command: bin/zeoserver fg
   volumes:
-    - /etc/localtime:/etc/localtime:ro # Share timezone data with host
-# send logs to graylog2. following works only with docker-compose 1.5 and docker 1.8 or newer
+    - /etc/localtime:/etc/localtime:ro
   log_driver: "gelf" 
   log_opt:
     address: "udp://swarm01-eeasites.eea.europa.eu:12201"
-  restart: always
   restart: always
 
 postfix:
@@ -83,8 +74,7 @@ postfix:
   env_file:
     - .postfix.secret
   volumes:
-    - /etc/localtime:/etc/localtime:ro # Share timezone data with host
-# send logs to graylog2. following works only with docker-compose 1.5 and docker 1.8 or newer
+    - /etc/localtime:/etc/localtime:ro
   log_driver: "gelf" 
   log_opt:
     address: "udp://swarm01-eeasites.eea.europa.eu:12201"
