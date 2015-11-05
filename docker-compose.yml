@@ -8,9 +8,9 @@ apache:
     - apache.env
   volumes:
     - /etc/localtime:/etc/localtime:ro
-  log_driver: "gelf" 
-  log_opt:
-    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
+#  log_driver: "gelf"
+#  log_opt:
+#    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
   restart: always
 
 haproxy:
@@ -20,9 +20,9 @@ haproxy:
     - www2
   volumes:
     - /etc/localtime:/etc/localtime:ro
-  log_driver: "gelf" 
-  log_opt:
-    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
+#  log_driver: "gelf"
+#  log_opt:
+#    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
   restart: always
 
 www1:
@@ -35,9 +35,9 @@ www1:
   command: bin/www1 console
   volumes:
     - /etc/localtime:/etc/localtime:ro
-  log_driver: "gelf" 
-  log_opt:
-    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
+#  log_driver: "gelf"
+#  log_opt:
+#    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
   restart: always
 
 www2:
@@ -50,9 +50,9 @@ www2:
   command: bin/www1 console
   volumes:
     - /etc/localtime:/etc/localtime:ro
-  log_driver: "gelf" 
-  log_opt:
-    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
+#  log_driver: "gelf"
+#  log_opt:
+#    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
   restart: always
 
 zeo:
@@ -62,9 +62,9 @@ zeo:
   command: bin/zeoserver fg
   volumes:
     - /etc/localtime:/etc/localtime:ro
-  log_driver: "gelf" 
-  log_opt:
-    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
+#  log_driver: "gelf"
+#  log_opt:
+#    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
   restart: always
 
 postfix:
@@ -75,9 +75,9 @@ postfix:
     - .postfix.secret
   volumes:
     - /etc/localtime:/etc/localtime:ro
-  log_driver: "gelf" 
-  log_opt:
-    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
+#  log_driver: "gelf"
+#  log_opt:
+#    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
   restart: always
 
 data:
