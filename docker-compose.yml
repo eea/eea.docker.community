@@ -24,6 +24,8 @@ haproxy:
 #  log_opt:
 #    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
   restart: always
+  environment:
+    - BACKENDS=www1:80 www2:80
 
 www1:
   image: eeacms/cynin
