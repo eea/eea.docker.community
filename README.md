@@ -50,7 +50,7 @@ Edit the secret files with real settings (see deployed eea.docker.redmine for ex
 5. **Troubleshooting**
    If the http://localhost:7070 is not responding or throws an 503 error
  ```
-    $ docker-compose rm apache haproxy www1 www2 zeo postfix
+    $ docker-compose rm -v apache haproxy www1 www2 zeo postfix
     $ docker-compose up -d --no-recreate
     
  ```
