@@ -1,5 +1,5 @@
 apache:
-  image: eeacms/apache
+  image: eeacms/apache:2.4
   links:
     - haproxy
   ports:
