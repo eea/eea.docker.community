@@ -83,7 +83,8 @@ postfix:
   restart: always
 
 data:
-  build: data
+  image: busybox
   volumes:
     - /var/local/community.eea.europa.eu/var/filestorage
     - /var/local/community.eea.europa.eu/var/blobstorage
+  command: chown -R 500:500 /var/local/community.eea.europa.eu
