@@ -66,7 +66,7 @@ Edit the secret files with real settings (see deployed eea.docker.redmine for ex
 
 If you don't have already an existing Cyn.in site (zodb data.fs) than the following step will get you started to create a fresh Cyn.in site. 
 
-1. expose a port for www1 container: in docker-compose.yml at the www1 section (this will allow you to get into the Plone www1 instance ZMI) add: ```ports: "8080:80"```
+1. expose a port for www1 container: in docker-compose.yml at the www1 section (this will allow you to get into the Plone www1 instance ZMI) add: ```ports: "8080:8080"```
 2. run command: docker-compose up
 3. open in browser: http://localhost:8080/manage
 user: admin
