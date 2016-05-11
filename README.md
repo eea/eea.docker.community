@@ -62,6 +62,37 @@ Edit the secret files with real settings (see deployed eea.docker.redmine for ex
     $ docker-compose rm -v apache haproxy www1 www2 zeo postfix
     $ docker-compose up -d --no-recreate
 
+### Data migration
+
+You can access production data inside `data` container at:
+
+    /var/local/community.eea.europa.eu/var/filestorage
+    /var/local/community.eea.europa.eu/var/blobstorage
+
+Thus:
+
+1. Start **rsync client** on host **where** do you want to migrate data (DESTINATION HOST):
+
+  ```
+    $ docker-compose up data
+    $ docker run -it --rm --name=r-client --volumes-from=eeadockercommunity_data_1 eeacms/rsync sh
+  ```
+
+2. Start **rsync server** on host **from where** do you want to migrate data (SOURCE HOST):
+
+  ```
+    $ docker run -it --rm --name=r-server -p 2222:22 --volumes-from=eeadockercommunity_data_1 \
+                 -e SSH_AUTH_KEY="<SSH-KEY-FROM-R-CLIENT-ABOVE>" \
+             eeacms/rsync server
+  ```
+
+3. Within **rsync client** container from step 1 run:
+
+  ```
+    $ rsync -e 'ssh -p 2222' -avz root@<SOURCE HOST IP>:/var/local/community.eea.europa.eu/var/filestorage/ /var/local/community.eea.europa.eu/var/filestorage/
+    $ rsync -e 'ssh -p 2222' -avz root@<SOURCE HOST IP>:/var/local/community.eea.europa.eu/var/blobstorage/ /var/local/community.eea.europa.eu/var/blobstorage/
+  ```
+
 ### First time steps to get a clean Cyn.in portal
 
 If you don't have already an existing Cyn.in site (zodb data.fs) than the following step will get you started to create a fresh Cyn.in site. 
