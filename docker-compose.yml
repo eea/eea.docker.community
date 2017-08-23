@@ -2,13 +2,12 @@ version: "2"
 services:
   apache:
     image: eeacms/apache:2.4-2.1
+    restart: unless-stopped
     ports:
-      - "80:80"
-      - "443:443"
+    - "80:80"
+    - "443:443"
     depends_on:
-      - haproxy
-    env_file:
-      - apache.env
+    - haproxy
     environment:
        APACHE_MODULES: "http2_module"
        APACHE_CONFIG: |-
@@ -29,85 +28,81 @@ services:
             SSLCompression off
             SSLCertificateFile /certs/server.crt
             SSLCertificateKeyFile /certs/server.key
-         
-            SSLOptions +StdEnvVars       
- 
+
+            SSLOptions +StdEnvVars
+
             ProxyTimeout 600
             ProxyRequests Off
-            
+
             RewriteEngine On
- 
+
             LimitRequestBody 104857600
             RequestHeader set Host "%{HTTP_HOST}s"
             RequestHeader set X-Real-IP "%{REMOTE_ADDR}s"
             RequestHeader set X-Forwarded-For "%{X-Forwarded-For}s"
             RequestHeader set X-Forwarded-Proto https
             RequestHeader set X-Frame-Options SAMEORIGIN
-            
+
             RewriteRule ^/(.*) http://haproxy:5000/VirtualHostBase/https/${SERVER_NAME}:443/cynin/VirtualHostRoot/$$1 [P,L]
-            
+
          </VirtualHost>
-       TZ: "Europe/Copenhagen"
+       TZ: "${TZ}"
     volumes:
-      - /var/local/deploy/www-eea-certs/:/certs/
-  
+    - /var/local/deploy/www-eea-certs/:/certs/
 
   haproxy:
-    restart: always
-    image: eeacms/haproxy:1.6
-    links:
-     - www1
-     - www2
+    image: eeacms/haproxy:1.7-3.0
+    restart: unless-stopped
+    depends_on:
+    - www1
+    - www2
     environment:
-     BACKENDS: www1 www2
-     BACKENDS_PORT: 8080
-     TZ: "Europe/Copenhagen"
-
-
-  postfix:
-    restart: always
-    image: eeacms/postfix:eionet
-    env_file:
-      - .postfix.secret
-    environment:
-      TZ: "Europe/Copenhagen"
-
-
+     BACKENDS: "www1 www2"
+     BACKENDS_PORT: "8080"
+     DNS_ENABLED: "true"
+     TZ: "${TZ}"
 
   www1:
-    restart: always
-    image: eeacms/cynin
-    links:
-      - zeo
-      - postfix
+    image: eeacms/cynin:1.0
+    restart: unless-stopped
+    depends_on:
+    - zeo
+    - postfix
     environment:
-      SERVICES: zope
-      TZ: "Europe/Copenhagen"
+      SERVICES: "zope"
+      TZ: "${TZ}"
 
   www2:
-    restart: always
-    image: eeacms/cynin
+    image: eeacms/cynin:1.0
+    restart: unless-stopped
     links:
-      - zeo
-      - postfix
+    - zeo
+    - postfix
     environment:
-      SERVICES: zope
-      TZ: "Europe/Copenhagen"
-
-
+      SERVICES: "zope"
+      TZ: "${TZ}"
 
   zeo:
-    restart: always
-    image: eeacms/cynin
+    image: eeacms/cynin:1.0
+    restart: unless-stopped
     environment:
       SERVICES: "zeo"
-      TZ: "Europe/Copenhange"
+      TZ: "${TZ}"
     volumes:
-      - community-filestorage:/var/local/community.eea.europa.eu/var/filestorage
-      - community-blobstorage:/var/local/community.eea.europa.eu/var/blobstorage
+    - community-filestorage:/var/local/community.eea.europa.eu/var/filestorage
+    - community-blobstorage:/var/local/community.eea.europa.eu/var/blobstorage
 
+  postfix:
+    image: eeacms/postfix:2.10-3.1
+    restart: unless-stopped
+    environment:
+      MTP_HOST: "${SERVER_NAME}"
+      MTP_RELAY: "${POSTFIX_RELAY}"
+      MTP_PORT: "${POSTFIX_PORT}"
+      MTP_USER: "${POSTFIX_USER}"
+      MTP_PASS: "${POSTFIX_PASS}"
+      TZ: "${TZ}"
 
 volumes:
   community-filestorage:
   community-blobstorage:
-
