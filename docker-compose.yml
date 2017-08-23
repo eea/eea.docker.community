@@ -12,6 +12,11 @@ services:
        APACHE_MODULES: "http2_module"
        APACHE_CONFIG: |-
          <VirtualHost *:80>
+            ServerName community.apps.eea.europa.eu
+            RewriteEngine On
+            RewriteRule ^(.*)$$ https://${SERVER_NAME}$$1 [R=permanent,L]
+         </VirtualHost>
+         <VirtualHost *:80>
             ServerName ${SERVER_NAME}
             RewriteEngine On
             RewriteRule ^(.*)$$ https://${SERVER_NAME}$$1 [R=permanent,L]
@@ -59,7 +64,6 @@ services:
     environment:
      BACKENDS: "www1 www2"
      BACKENDS_PORT: "8080"
-     DNS_ENABLED: "true"
      TZ: "${TZ}"
 
   www1:
