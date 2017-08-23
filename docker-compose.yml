@@ -7,16 +7,18 @@ services:
       - "443:443"
     depends_on:
       - haproxy
+    env_file:
+      - apache.env
     environment:
        APACHE_MODULES: "http2_module"
        APACHE_CONFIG: |-
          <VirtualHost *:80>
-            ServerName community.devecs.eea.europa.eu
+            ServerName ${SERVER_NAME}
             RewriteEngine On
-            RewriteRule ^(.*)$$ https://community.devecs.eea.europa.eu$$1 [R=permanent,L]
+            RewriteRule ^(.*)$$ https://${SERVER_NAME}$$1 [R=permanent,L]
          </VirtualHost>
          <VirtualHost *:443>
-            ServerName community.devecs.eea.europa.eu
+            ServerName ${SERVER_NAME}
             Protocols h2 http/1.1
             H2ModernTLSOnly off
             KeepAliveTimeout 30
@@ -42,7 +44,7 @@ services:
             RequestHeader set X-Forwarded-Proto https
             RequestHeader set X-Frame-Options SAMEORIGIN
             
-            RewriteRule ^/(.*) http://haproxy:5000/VirtualHostBase/https/community.devecs.eea.europa.eu:443/cynin/VirtualHostRoot/$$1 [P,L]
+            RewriteRule ^/(.*) http://haproxy:5000/VirtualHostBase/https/${SERVER_NAME}:443/cynin/VirtualHostRoot/$$1 [P,L]
             
          </VirtualHost>
        TZ: "Europe/Copenhagen"
