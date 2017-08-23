@@ -1,4 +1,4 @@
-## EEA Community application docker setup
+# EEA Community application docker setup
 
 EEA Community site orchestration for deployment, including  **Apache**, **HAProxy**, **ZEO server**, **ZEO client**,  **Postfix**.
 
@@ -7,86 +7,77 @@ EEA Community site orchestration for deployment, including  **Apache**, **HAProx
 inspect the [Github repository](https://github.com/eea/eea.docker.cynin)
 to see the Dockerfile.
 
-### Installation
+
+## Installation
+
 1. Install [Docker](https://www.docker.com/).
 2. Install [Docker Compose](https://docs.docker.com/compose/).
 
-### Usage
+
+## Usage
 
 1. Production environment:
 
-
-    $ git clone https://github.com/eea/eea.docker.community
-    $ cd eea.docker.community
-
+        $ git clone https://github.com/eea/eea.docker.community
+        $ cd eea.docker.community
 
 During the first time deployment, create the secret environment files
 
-
-    $ cp .env.example .env
-
+        $ cp .env.example .env
 
 Edit the secret files with real settings (see deployed eea.docker.redmine for example)
 
-
-    $ vim .env
-
+        $ vim .env
 
 2. **You may also want to restore existing database** within data container:
 
-
-    $ docker-compose up -d zeo
-    $ docker cp Data.fs eeadockercommunity_zeo_1:/var/local/community.eea.europa.eu/var/filestorage/
-    $ docker exec -it eeadockercommunity_zeo_1 chown 1000:1000 /var/local/community.eea.europa.eu/var/filestorage/Data.fs
+        $ docker-compose up -d zeo
+        $ docker cp Data.fs eeadockercommunity_zeo_1:/var/local/community.eea.europa.eu/var/filestorage/
+        $ docker exec -it eeadockercommunity_zeo_1 chown 1000:1000 /var/local/community.eea.europa.eu/var/filestorage/Data.fs
 
 3. **Start services**
 
         $ docker-compose up -d
 
-
 4. After all containers are started, you can access the application at **http://localhost:80**. See the docker-compose.yml file for the ports that are exposed to the host.
 
 
-### Upgrade
+## Upgrade
 
-    $ cd eea.docker.community
-    $ git pull
-    $ docker-compose pull
+        $ cd eea.docker.community
+        $ git pull
+        $ docker-compose pull
 
-    $ docker-compose down
-    $ docker-compose up -d
+        $ docker-compose down
+        $ docker-compose up -d
 
-### Data migration
+
+## Data migration
 
 You can access production data inside `filestorage` and `blobstorage` volumes:
 
-    docker volume ls
+        $ docker volume ls
 
 Thus:
 
 1. Start **rsync client** on host **from where** do you want to migrate data (SOURCE HOST):
 
-
-    $ docker run -it --rm --name=r-client --volumes-from=eeadockercommunity_zeo_1 eeacms/rsync sh
-
+        $ docker run -it --rm --name=r-client --volumes-from=eeadockercommunity_zeo_1 eeacms/rsync sh
 
 2. Start **rsync server** on host **where** do you want to migrate data (DESTINATION HOST):
 
-
-    $ docker-compose up -d zeo
-    $ docker run -it --rm --name=r-server -p 2222:22 --volumes-from=eeadockercommunity_zeo_1 \
+        $ docker-compose up -d zeo
+        $ docker run -it --rm --name=r-server -p 2222:22 --volumes-from=eeadockercommunity_zeo_1 \
                  -e SSH_AUTH_KEY="<SSH-KEY-FROM-R-CLIENT-ABOVE>" \
              eeacms/rsync server
 
-
 3. Within **rsync client** container from step 1 run:
 
+        $ rsync -e 'ssh -p 2222' -avz /var/local/community.eea.europa.eu/var/filestorage/ root@<DESTINATION HOST IP>:/var/local/community.eea.europa.eu/var/filestorage/
+        $ rsync -e 'ssh -p 2222' -avz /var/local/community.eea.europa.eu/var/blobstorage/ root@<DESTINATION HOST IP>:/var/local/community.eea.europa.eu/var/blobstorage/
 
-    $ rsync -e 'ssh -p 2222' -avz /var/local/community.eea.europa.eu/var/filestorage/ root@<DESTINATION HOST IP>:/var/local/community.eea.europa.eu/var/filestorage/
-    $ rsync -e 'ssh -p 2222' -avz /var/local/community.eea.europa.eu/var/blobstorage/ root@<DESTINATION HOST IP>:/var/local/community.eea.europa.eu/var/blobstorage/
 
-
-### First time steps to get a clean Cyn.in portal
+## First time steps to get a clean Cyn.in portal
 
 If you don't have already an existing Cyn.in site (zodb data.fs) than the following step will get you started to create a fresh Cyn.in site.
 
