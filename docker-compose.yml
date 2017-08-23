@@ -63,7 +63,7 @@ services:
      TZ: "${TZ}"
 
   www1:
-    image: eeacms/cynin:1.0
+    image: eeacms/cynin
     restart: unless-stopped
     depends_on:
     - zeo
@@ -73,7 +73,7 @@ services:
       TZ: "${TZ}"
 
   www2:
-    image: eeacms/cynin:1.0
+    image: eeacms/cynin
     restart: unless-stopped
     links:
     - zeo
@@ -83,7 +83,7 @@ services:
       TZ: "${TZ}"
 
   zeo:
-    image: eeacms/cynin:1.0
+    image: eeacms/cynin
     restart: unless-stopped
     environment:
       SERVICES: "zeo"
