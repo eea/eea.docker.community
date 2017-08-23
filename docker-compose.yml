@@ -1,98 +1,113 @@
-apache:
-  restart: always
-  image: eeacms/apache:2.4s
-  links:
-  - haproxy
-  ports:
-  - "7070:80"
-  env_file:
-  - apache.env
-  volumes:
-  - /etc/localtime:/etc/localtime:ro
+version: "2"
+services:
+  apache:
+    image: eeacms/apache:2.4-2.1
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - haproxy
+    env_file:
+      - apache.env
+    environment:
+       APACHE_MODULES: "http2_module"
+       APACHE_CONFIG: |-
+         <VirtualHost *:80>
+            ServerName ${SERVER_NAME}
+            RewriteEngine On
+            RewriteRule ^(.*)$$ https://${SERVER_NAME}$$1 [R=permanent,L]
+         </VirtualHost>
+         <VirtualHost *:443>
+            ServerName ${SERVER_NAME}
+            Protocols h2 http/1.1
+            H2ModernTLSOnly off
+            KeepAliveTimeout 30
+            SSLEngine on
+            SSLProtocol ALL -SSLv2 -SSLv3
+            SSLCipherSuite ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS;
+            SSLHonorCipherOrder on
+            SSLCompression off
+            SSLCertificateFile /certs/server.crt
+            SSLCertificateKeyFile /certs/server.key
+         
+            SSLOptions +StdEnvVars       
+ 
+            ProxyTimeout 600
+            ProxyRequests Off
+            
+            RewriteEngine On
+ 
+            LimitRequestBody 104857600
+            RequestHeader set Host "%{HTTP_HOST}s"
+            RequestHeader set X-Real-IP "%{REMOTE_ADDR}s"
+            RequestHeader set X-Forwarded-For "%{X-Forwarded-For}s"
+            RequestHeader set X-Forwarded-Proto https
+            RequestHeader set X-Frame-Options SAMEORIGIN
+            
+            RewriteRule ^/(.*) http://haproxy:5000/VirtualHostBase/https/${SERVER_NAME}:443/cynin/VirtualHostRoot/$$1 [P,L]
+            
+         </VirtualHost>
+       TZ: "Europe/Copenhagen"
+    volumes:
+      - /var/local/deploy/www-eea-certs/:/certs/
+  
 
-#  log_driver: "gelf"
-#  log_opt:
-#    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
-
-haproxy:
-  restart: always
-  image: eeacms/haproxy:1.6
-  links:
-  - www1
-  - www2
-  volumes:
-  - /etc/localtime:/etc/localtime:ro
-  environment:
-  - BACKENDS=www1 www2
-  - BACKENDS_PORT=8080
-
-#  log_driver: "gelf"
-#  log_opt:
-#    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
-
-postfix:
-  restart: always
-  image: eeacms/postfix:eionet
-  volumes:
-  - /etc/localtime:/etc/localtime:ro
-  env_file:
-  - .postfix.secret
-  volumes:
-  - /etc/localtime:/etc/localtime:ro
-
-#  log_driver: "gelf"
-#  log_opt:
-#    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
-
-www1:
-  restart: always
-  image: eeacms/cynin
-  links:
-  - zeo
-  - postfix
-  volumes:
-  - /etc/localtime:/etc/localtime:ro
-  environment:
-  - SERVICES=zope
-
-#  log_driver: "gelf"
-#  log_opt:
-#    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
-
-
-www2:
-  restart: always
-  image: eeacms/cynin
-  links:
-  - zeo
-  - postfix
-  volumes:
-  - /etc/localtime:/etc/localtime:ro
-  environment:
-  - SERVICES=zope
-
-#  log_driver: "gelf"
-#  log_opt:
-#    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
+  haproxy:
+    restart: always
+    image: eeacms/haproxy:1.6
+    links:
+     - www1
+     - www2
+    environment:
+     BACKENDS: www1 www2
+     BACKENDS_PORT: 8080
+     TZ: "Europe/Copenhagen"
 
 
-zeo:
-  restart: always
-  image: eeacms/cynin
-  volumes_from:
-  - data
-  volumes:
-  - /etc/localtime:/etc/localtime:ro
-  environment:
-  - SERVICES=zeo
+  postfix:
+    restart: always
+    image: eeacms/postfix:eionet
+    env_file:
+      - .postfix.secret
+    environment:
+      TZ: "Europe/Copenhagen"
 
-#  log_driver: "gelf"
-#  log_opt:
-#    address: "udp://swarm01-eeasites.eea.europa.eu:12201"
 
-data:
-  image: busybox
-  volumes:
-  - /var/local/community.eea.europa.eu/var/filestorage
-  - /var/local/community.eea.europa.eu/var/blobstorage
-  command: ["chown", "-v", "-R", "500:500", "/var/local/community.eea.europa.eu"]
+
+  www1:
+    restart: always
+    image: eeacms/cynin
+    links:
+      - zeo
+      - postfix
+    environment:
+      SERVICES: zope
+      TZ: "Europe/Copenhagen"
+
+  www2:
+    restart: always
+    image: eeacms/cynin
+    links:
+      - zeo
+      - postfix
+    environment:
+      SERVICES: zope
+      TZ: "Europe/Copenhagen"
+
+
+
+  zeo:
+    restart: always
+    image: eeacms/cynin
+    environment:
+      SERVICES: "zeo"
+      TZ: "Europe/Copenhange"
+    volumes:
+      - community-filestorage:/var/local/community.eea.europa.eu/var/filestorage
+      - community-blobstorage:/var/local/community.eea.europa.eu/var/blobstorage
+
+
+volumes:
+  community-filestorage:
+  community-blobstorage:
+
