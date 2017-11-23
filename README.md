@@ -7,49 +7,64 @@ EEA Community site orchestration for deployment, including  **Apache**, **HAProx
 inspect the [Github repository](https://github.com/eea/eea.docker.cynin)
 to see the Dockerfile.
 
-
-## Installation
-
-1. Install [Docker](https://www.docker.com/).
-2. Install [Docker Compose](https://docs.docker.com/compose/).
-
-
 ## Usage
 
 1. Production environment:
 
-        $ git clone https://github.com/eea/eea.docker.community
-        $ cd eea.docker.community
+> **Note:** See **EEA SVN** for `answers.txt` file
 
-During the first time deployment, create the secret environment files
-
-        $ cp .env.example .env
-
-Edit the secret files with real settings (see deployed eea.docker.redmine for example)
-
-        $ vim .env
-
-2. **You may also want to restore existing database** within data container:
-
-        $ docker-compose up -d zeo
-        $ docker cp Data.fs eeadockercommunity_zeo_1:/var/local/community.eea.europa.eu/var/filestorage/
-        $ docker exec -it eeadockercommunity_zeo_1 chown 1000:1000 /var/local/community.eea.europa.eu/var/filestorage/Data.fs
-
-3. **Start services**
-
-        $ docker-compose up -d
-
-4. After all containers are started, you can access the application at **http://localhost:80**. See the docker-compose.yml file for the ports that are exposed to the host.
-
+* From **Rancher Catalog > EEA** deploy:
+  * Community (EEA Forum)
 
 ## Upgrade
 
-        $ cd eea.docker.community
-        $ git pull
-        $ docker-compose pull
+### Upgrade `community` stack
 
-        $ docker-compose down
-        $ docker-compose up -d
+1. **Add new catalog version** within [eea.rancher.catalog](https://github.com/eea/eea.rancher.catalog/tree/master/templates/community)
+
+   * Prepare next release, e.g.: `17.9`:
+
+        ```
+        $ git clone git@github.com:eea/eea.rancher.catalog.git
+        $ cd eea.rancher.catalog/templates/community
+
+        $ cp -r 59 60
+        $ git add 60
+        $ git commit -m "Prepare release 17.9"
+        ```
+
+   * Release new version, e.g:. `17.9`:
+
+        ```
+        $ vim config.yml
+        version: "17.9"
+
+        $ vim 60/rancher-compose.yml
+        ...
+        version: "17.9"
+        ...
+        uuid: community-60
+        ...
+
+        $ vim 60/docker-compose.yml
+        ...
+        - image: eeacms/cynin:17.9
+        ...
+
+        $ git add .
+        $ git commit -m "Release 17.9"
+        $ git push
+        ```
+
+   * See [Rancher docs](https://docs.rancher.com/rancher/v1.2/en/catalog/private-catalog/#rancher-catalog-templates) for more details.
+
+2. **Upgrade Rancher** deployment
+
+   * Click the available upgrade button
+
+   * Confirm the upgrade
+
+   * Or roll-back if something goes wrong and abort the upgrade procedure
 
 
 ## Data migration
@@ -62,35 +77,38 @@ Thus:
 
 1. Start **rsync client** on host **from where** do you want to migrate data (SOURCE HOST):
 
-        $ docker run -it --rm --name=r-client --volumes-from=eeadockercommunity_zeo_1 eeacms/rsync sh
+        $ docker run -it --rm --name=r-client \
+                     -v community-filestorage:/filestorage \
+                     -v community-blobstorage:/blobstorage \
+                 eeacms/rsync sh
 
 2. Start **rsync server** on host **where** do you want to migrate data (DESTINATION HOST):
 
-        $ docker-compose up -d zeo
-        $ docker run -it --rm --name=r-server -p 2222:22 --volumes-from=eeadockercommunity_zeo_1 \
-                 -e SSH_AUTH_KEY="<SSH-KEY-FROM-R-CLIENT-ABOVE>" \
-             eeacms/rsync server
+        $ docker run -it --rm --name=r-server -p 2222:22 \
+                     -v community-filestorage:/filestorage \
+                     -v community-blobstorage:/blobstorage \
+                     -e SSH_AUTH_KEY="<SSH-KEY-FROM-R-CLIENT-ABOVE>" \
+                 eeacms/rsync server
 
-3. Within **rsync client** container from step 1 run:
+3. Within **r-client** container from step 1 run:
 
-        $ rsync -e 'ssh -p 2222' -avz /var/local/community.eea.europa.eu/var/filestorage/ root@<DESTINATION HOST IP>:/var/local/community.eea.europa.eu/var/filestorage/
-        $ rsync -e 'ssh -p 2222' -avz /var/local/community.eea.europa.eu/var/blobstorage/ root@<DESTINATION HOST IP>:/var/local/community.eea.europa.eu/var/blobstorage/
+        $ rsync -e 'ssh -p 2222' -avz /filestorage/ root@<DESTINATION HOST IP>:/filestorage/
+        $ rsync -e 'ssh -p 2222' -avz /blobstorage/ root@<DESTINATION HOST IP>:/blobstorage/
 
 
 ## First time steps to get a clean Cyn.in portal
 
 If you don't have already an existing Cyn.in site (zodb data.fs) than the following step will get you started to create a fresh Cyn.in site.
 
-1. expose a port for www1 container: in docker-compose.yml at the www1 section (this will allow you to get into the Plone www1 instance ZMI) add: ```ports: "8080:8080"```
-2. run command: docker-compose up
-3. open in browser: http://localhost:8080/manage
+1. Point your public LB to cynin instance instead of apache
+2. open in browser: http://my.cynin.com/manage
 user: admin
 password: secret
 (default zope admin user)
-4. from ZMI add a "Plone Site" object, set the id: "cynin", press the "Add plone site" button
-5. select "cynin", look for "portal_quickinstaller", check the product called "Ubify Site Policy", press the "Install" button
-6. open in browser: http://localhost:8080/cynin
-
-You can than visit via apache and HAProxy via http://localhost:7070/cynin
+3. Change `admin` password within **acl_users**
+4. From ZMI add a "Plone Site" object, set the id: "cynin", press the "Add plone site" button
+5. Select "cynin", look for "portal_quickinstaller", check the product called "Ubify Site Policy", press the "Install" button
+6. Open in browser: http://my.cynin.com/cynin
+7. Point back your public LB to apache
 
 Documentation at http://cyn.in/
